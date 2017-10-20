@@ -59,46 +59,103 @@
 	//Rx from events
 
 
-	//Simple click
-	var btn = (0, _jquery2.default)('#btn');
-	//Create observable from click event
-	var btnStream$ = _Rx2.default.Observable.fromEvent(btn, 'click');
-
-	btnStream$.subscribe(function (e) {
-	    console.log("Click");
-	}, function (err) {
-	    console.log("err");
-	}, function () {
-	    console.log("Completed");
-	});
-
-	//Create reference form input and output
-	var input = (0, _jquery2.default)('#input');
-	var output = (0, _jquery2.default)('#output');
-	//Create observable from keyup event
-	var inputStream$ = _Rx2.default.Observable.fromEvent(input, 'keyup');
-	inputStream$.subscribe(function (e) {
-	    console.log(e.currentTarget.value);
-	    //Put text change into output div
-	    output.text(e.target.value);
-	}, function (err) {
-	    console.log("err");
-	}, function () {
-	    console.log("Completed");
-	});
-
-	//Create observable from mouse move event
-	var moveStream$ = _Rx2.default.Observable.fromEvent(document, 'mousemove');
-	moveStream$.subscribe(function (e) {
-	    console.log(e.target.value);
-	    output.html('<h1>x: ' + e.clientX + ' y: ' + e.clientY + '</h1>');
-	}, function (err) {
-	    console.log("err");
-	}, function () {
-	    console.log("Completed");
-	});
+	// //Simple click
+	// const btn = $('#btn');
+	// //Create observable from click event
+	// const btnStream$ = Rx.Observable.fromEvent(btn, 'click');
+	//
+	// btnStream$.subscribe(
+	//     function (e) {
+	//         console.log("Click")
+	//     }, function (err) {
+	//         console.log("err")
+	//     }, function () {
+	//         console.log("Completed")
+	//     });
+	//
+	// //Create reference form input and output
+	// const input = $('#input');
+	// const output = $('#output');
+	// //Create observable from keyup event
+	// const inputStream$ = Rx.Observable.fromEvent(input, 'keyup')
+	// inputStream$.subscribe(
+	//     function (e) {
+	//         console.log(e.currentTarget.value)
+	//         //Put text change into output div
+	//         output.text(e.target.value)
+	//     }, function (err) {
+	//         console.log("err")
+	//     }, function () {
+	//         console.log("Completed")
+	//     });
+	//
+	// //Create observable from mouse move event
+	// const moveStream$ = Rx.Observable.fromEvent(document, 'mousemove')
+	// moveStream$.subscribe(
+	//     function (e) {
+	//         console.log(e.target.value)
+	//         output.html('<h1>x: ' + e.clientX + ' y: ' + e.clientY + '</h1>')
+	//     }, function (err) {
+	//         console.log("err")
+	//     }, function () {
+	//         console.log("Completed")
+	//     });
 
 	// https://github.com/Reactive-Extensions/RxJS/blob/master/doc/gettingstarted/events.md
+
+
+	//------------------------------------------------------------------------------------------
+
+	//Rx from Iterable
+
+
+	//Create simple array
+	var numbers = [33, 44, 55, 66, 77];
+
+	//Create an observable form this array
+	var numbers$ = _Rx2.default.Observable.from(numbers);
+
+	numbers$.subscribe(function (v) {
+	    console.log(v);
+	}, function (err) {
+	    console.log(err);
+	}, function (completed) {
+	    console.log("complete");
+	});
+
+	//Create posts object
+
+	var postsElement = (0, _jquery2.default)('#posts');
+
+	var posts = [{ title: 'post one', body: 'this is the body' }, { title: 'post Two', body: 'this is the body' }, { title: 'post Three', body: 'this is the body' }, { title: 'post Four', body: 'this is the body' }];
+
+	_Rx2.default.Observable.from(posts).subscribe(function (posts) {
+	    (0, _jquery2.default)('#posts').append('<li><h3>' + posts.title + '</h3><p>' + posts.body + '</p></li>');
+	});
+
+	//Example iterate other data structures
+	var set = new Set(['Hello', 44, { title: 'Mi title' }]);
+	var set$ = _Rx2.default.Observable.from(set);
+	set$.subscribe(function (value) {
+	    return console.log(value);
+	});
+
+	//Short subscribe
+	var map = new Map([[1, 2], [2, 3], [5, 6]]);
+	var map$ = _Rx2.default.Observable.from(map).subscribe(function (value) {
+	    return console.log(value);
+	});
+
+	//Example return observable from other observable
+	var map2 = new Map([[3, 22], [2132, 1233], [1235, 1236]]);
+	var map2$ = _Rx2.default.Observable.from(map2);
+	map2$.subscribe(function (value) {
+	    return _Rx2.default.Observable.from(value).subscribe(function (v) {
+	        return console.log(v);
+	    });
+	});
+
+	// https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/fromarray.md
 
 /***/ }),
 /* 1 */
