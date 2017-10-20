@@ -54,66 +54,94 @@ import Rx from 'rxjs/Rx';
 //Rx from Iterable
 
 
+// //Create simple array
+// const numbers = [33, 44, 55, 66, 77]
+//
+// //Create an observable form this array
+// const numbers$ = Rx.Observable.from(numbers)
+//
+// numbers$.subscribe(
+//     v => {
+//         console.log(v);
+//     },
+//     err => {
+//         console.log(err);
+//     },
+//     completed => {
+//         console.log("complete");
+//     });
+//
+// //Create posts object
+//
+// const postsElement = $('#posts');
+//
+// const posts = [
+//     {title: 'post one', body: 'this is the body'},
+//     {title: 'post Two', body: 'this is the body'},
+//     {title: 'post Three', body: 'this is the body'},
+//     {title: 'post Four', body: 'this is the body'}
+// ]
+//
+// Rx.Observable.from(posts).subscribe(
+//     posts => {
+//         $('#posts').append('<li><h3>' + posts.title + '</h3><p>' + posts.body + '</p></li>')
+//     }
+// )
+//
+// //Example iterate other data structures
+// const set = new Set(['Hello', 44, {title: 'Mi title'}])
+// const set$ = Rx.Observable.from(set)
+// set$.subscribe(
+//     value => console.log(value)
+// )
+//
+//
+// //Short subscribe
+// const map = new Map([[1, 2], [2, 3], [5, 6]])
+// const map$ = Rx.Observable.from(map)
+//     .subscribe(
+//         value => console.log(value)
+//     )
+//
+// //Example return observable from other observable
+// const map2 = new Map([[3, 22], [2132, 1233], [1235, 1236]])
+// const map2$ = Rx.Observable.from(map2)
+// map2$.subscribe(
+//     value => Rx.Observable.from(value)
+//         .subscribe(
+//             v => console.log(v)
+//         )
+// )
+//
+// // https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/fromarray.md
 
-//Create simple array
-const numbers = [33, 44, 55, 66, 77]
 
-//Create an observable form this array
-const numbers$ = Rx.Observable.from(numbers)
+//------------------------------------------------------------------------------------------
 
-numbers$.subscribe(
-    v => {
-        console.log(v);
-    },
-    err => {
-        console.log(err);
-    },
-    completed => {
-        console.log("complete");
-    });
-
-//Create posts object
-
-const postsElement = $('#posts');
-
-const posts = [
-    {title: 'post one', body: 'this is the body'},
-    {title: 'post Two', body: 'this is the body'},
-    {title: 'post Three', body: 'this is the body'},
-    {title: 'post Four', body: 'this is the body'}
-]
-
-Rx.Observable.from(posts).subscribe(
-    posts => {
-        $('#posts').append('<li><h3>' + posts.title + '</h3><p>' + posts.body + '</p></li>')
-    }
-)
-
-//Example iterate other data structures
-const set = new Set(['Hello', 44, {title: 'Mi title'}])
-const set$ = Rx.Observable.from(set)
-set$.subscribe(
-    value => console.log(value)
-)
+//Rx from Scratch
 
 
-//Short subscribe
-const map = new Map([[1, 2], [2, 3], [5, 6]])
-const map$ = Rx.Observable.from(map)
+//We create a new Observable from 0
+const source$ = new Rx.Observable(observer => {
+    console.log('creating Observable')
+    //Emit function : emit element for all subscribers
+    observer.next("Hello World")
+    observer.next("Another Value")
+    //Emit function : emit an exception for all subscribers
+    observer.error("Something went wrong...")
+    setTimeout(() => {
+        observer.next("Yet a other value")
+        observer.complete()
+    }, 3000)
+})
+
+source$
+    .catch(err => Rx.Observable.of(err))//catch error
     .subscribe(
-        value => console.log(value)
-    )
+        x => console.log(x),
+        err => console.log(err),
+        complete => console.log("completed")
+    );
 
-//Example return observable from other observable
-const map2 = new Map([[3, 22], [2132, 1233], [1235, 1236]])
-const map2$ = Rx.Observable.from(map2)
-map2$.subscribe(
-    value => Rx.Observable.from(value)
-        .subscribe(
-            v => console.log(v)
-        )
-)
-
-// https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/fromarray.md
 
 

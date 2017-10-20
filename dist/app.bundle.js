@@ -109,53 +109,97 @@
 	//Rx from Iterable
 
 
-	//Create simple array
-	var numbers = [33, 44, 55, 66, 77];
+	// //Create simple array
+	// const numbers = [33, 44, 55, 66, 77]
+	//
+	// //Create an observable form this array
+	// const numbers$ = Rx.Observable.from(numbers)
+	//
+	// numbers$.subscribe(
+	//     v => {
+	//         console.log(v);
+	//     },
+	//     err => {
+	//         console.log(err);
+	//     },
+	//     completed => {
+	//         console.log("complete");
+	//     });
+	//
+	// //Create posts object
+	//
+	// const postsElement = $('#posts');
+	//
+	// const posts = [
+	//     {title: 'post one', body: 'this is the body'},
+	//     {title: 'post Two', body: 'this is the body'},
+	//     {title: 'post Three', body: 'this is the body'},
+	//     {title: 'post Four', body: 'this is the body'}
+	// ]
+	//
+	// Rx.Observable.from(posts).subscribe(
+	//     posts => {
+	//         $('#posts').append('<li><h3>' + posts.title + '</h3><p>' + posts.body + '</p></li>')
+	//     }
+	// )
+	//
+	// //Example iterate other data structures
+	// const set = new Set(['Hello', 44, {title: 'Mi title'}])
+	// const set$ = Rx.Observable.from(set)
+	// set$.subscribe(
+	//     value => console.log(value)
+	// )
+	//
+	//
+	// //Short subscribe
+	// const map = new Map([[1, 2], [2, 3], [5, 6]])
+	// const map$ = Rx.Observable.from(map)
+	//     .subscribe(
+	//         value => console.log(value)
+	//     )
+	//
+	// //Example return observable from other observable
+	// const map2 = new Map([[3, 22], [2132, 1233], [1235, 1236]])
+	// const map2$ = Rx.Observable.from(map2)
+	// map2$.subscribe(
+	//     value => Rx.Observable.from(value)
+	//         .subscribe(
+	//             v => console.log(v)
+	//         )
+	// )
+	//
+	// // https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/fromarray.md
 
-	//Create an observable form this array
-	var numbers$ = _Rx2.default.Observable.from(numbers);
 
-	numbers$.subscribe(function (v) {
-	    console.log(v);
+	//------------------------------------------------------------------------------------------
+
+	//Rx from Scratch
+
+
+	//We create a new Observable from 0
+	var source$ = new _Rx2.default.Observable(function (observer) {
+	    console.log('creating Observable');
+	    //Emit function : emit element for all subscribers
+	    observer.next("Hello World");
+	    observer.next("Another Value");
+	    //Emit function : emit an exception for all subscribers
+	    observer.error("Something went wrong...");
+	    setTimeout(function () {
+	        observer.next("Yet a other value");
+	        observer.complete();
+	    }, 3000);
+	});
+
+	source$.catch(function (err) {
+	    return _Rx2.default.Observable.of(err);
+	}) //catch error
+	.subscribe(function (x) {
+	    return console.log(x);
 	}, function (err) {
-	    console.log(err);
-	}, function (completed) {
-	    console.log("complete");
+	    return console.log(err);
+	}, function (complete) {
+	    return console.log("completed");
 	});
-
-	//Create posts object
-
-	var postsElement = (0, _jquery2.default)('#posts');
-
-	var posts = [{ title: 'post one', body: 'this is the body' }, { title: 'post Two', body: 'this is the body' }, { title: 'post Three', body: 'this is the body' }, { title: 'post Four', body: 'this is the body' }];
-
-	_Rx2.default.Observable.from(posts).subscribe(function (posts) {
-	    (0, _jquery2.default)('#posts').append('<li><h3>' + posts.title + '</h3><p>' + posts.body + '</p></li>');
-	});
-
-	//Example iterate other data structures
-	var set = new Set(['Hello', 44, { title: 'Mi title' }]);
-	var set$ = _Rx2.default.Observable.from(set);
-	set$.subscribe(function (value) {
-	    return console.log(value);
-	});
-
-	//Short subscribe
-	var map = new Map([[1, 2], [2, 3], [5, 6]]);
-	var map$ = _Rx2.default.Observable.from(map).subscribe(function (value) {
-	    return console.log(value);
-	});
-
-	//Example return observable from other observable
-	var map2 = new Map([[3, 22], [2132, 1233], [1235, 1236]]);
-	var map2$ = _Rx2.default.Observable.from(map2);
-	map2$.subscribe(function (value) {
-	    return _Rx2.default.Observable.from(value).subscribe(function (v) {
-	        return console.log(v);
-	    });
-	});
-
-	// https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/fromarray.md
 
 /***/ }),
 /* 1 */
