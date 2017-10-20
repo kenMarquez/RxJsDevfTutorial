@@ -121,27 +121,78 @@ import Rx from 'rxjs/Rx';
 //Rx from Scratch
 
 
-//We create a new Observable from 0
-const source$ = new Rx.Observable(observer => {
-    console.log('creating Observable')
-    //Emit function : emit element for all subscribers
-    observer.next("Hello World")
-    observer.next("Another Value")
-    //Emit function : emit an exception for all subscribers
-    observer.error("Something went wrong...")
+// //We create a new Observable from 0
+// const source$ = new Rx.Observable(observer => {
+//     console.log('creating Observable')
+//     //Emit function : emit element for all subscribers
+//     observer.next("Hello World")
+//     observer.next("Another Value")
+//     //Emit function : emit an exception for all subscribers
+//     observer.error("Something went wrong...")
+//     setTimeout(() => {
+//         observer.next("Yet a other value")
+//         observer.complete()
+//     }, 3000)
+// })
+//
+// source$
+//     .catch(err => Rx.Observable.of(err))//catch error
+//     .subscribe(
+//         x => console.log(x),
+//         err => console.log(err),
+//         complete => console.log("completed")
+//     );
+
+
+//------------------------------------------------------------------------------------------
+
+//Rx from Promise
+
+//Example how to create a promise from 0
+const myPromise = new Promise((resolve, reject) => {
+    console.log("Creating promise")
     setTimeout(() => {
-        observer.next("Yet a other value")
-        observer.complete()
+        resolve("hello from promise")
     }, 3000)
+});
+
+myPromise.then(x => {
+    console.log(x)
 })
 
-source$
-    .catch(err => Rx.Observable.of(err))//catch error
-    .subscribe(
-        x => console.log(x),
-        err => console.log(err),
-        complete => console.log("completed")
-    );
+//Example how to cobine promise with rx
+const source$ = Rx.Observable.fromPromise(myPromise)
+source$.subscribe(x => console.log(x))
+
+/*
+ * request user to github api
+ * return promise of request
+ */
+function getUser(username) {
+    return $.ajax({
+        url: 'https://api.github.com/users/' + username,
+        dataType: 'jsonp'
+    }).promise()
+}
 
 
+getUser("kenMarquez").then(
+    x => {
+        console.log(x)
+    }
+)
+
+Rx.Observable.fromPromise(getUser("KenMarquez"))
+    .subscribe(x => console.log(x));
+
+Rx.Observable.fromEvent($(username), 'keyup')
+    .subscribe(x => {
+        Rx.Observable.fromPromise(getUser(x.target.value))
+            .subscribe(user => {
+                console.log(user)
+                $('#name').text(user.data.name)
+                $('#blog').text(user.data.company)
+                $('#repos').text('Public respos: ' + user.data.public_repos)
+            });
+    })
 
