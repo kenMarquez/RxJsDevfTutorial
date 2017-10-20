@@ -38,3 +38,10 @@ $ npm start
 ```
 
 Visit [http://localhost:8000](http://localhost:8000)
+
+
+##Reference
+
+https://github.com/bradtraversy/rxjs_boiler
+
+http://reactivex.io/
