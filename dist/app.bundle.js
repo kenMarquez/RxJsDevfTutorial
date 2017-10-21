@@ -203,22 +203,93 @@
 
 	//Rx from Promise
 
-	//Example how to create a promise from 0
-	var myPromise = new Promise(function (resolve, reject) {
-	    console.log("Creating promise");
-	    setTimeout(function () {
-	        resolve("hello from promise");
-	    }, 3000);
-	});
+	// //Example how to create a promise from 0
+	// const myPromise = new Promise((resolve, reject) => {
+	//     console.log("Creating promise")
+	//     setTimeout(() => {
+	//         resolve("hello from promise")
+	//     }, 3000)
+	// });
+	//
+	// myPromise.then(x => {
+	//     console.log(x)
+	// })
+	//
+	// //Example how to cobine promise with rx
+	// const source$ = Rx.Observable.fromPromise(myPromise)
+	// source$.subscribe(x => console.log(x))
+	//
+	// /*
+	//  * request user to github api
+	//  * return promise of request
+	//  */
+	// function getUser(username) {
+	//     return $.ajax({
+	//         url: 'https://api.github.com/users/' + username,
+	//         dataType: 'jsonp'
+	//     }).promise()
+	// }
+	//
+	//
+	// getUser("kenMarquez").then(
+	//     x => {
+	//         console.log(x)
+	//     }
+	// )
+	//
+	// Rx.Observable.fromPromise(getUser("KenMarquez"))
+	//     .subscribe(x => console.log(x));
+	//
+	// Rx.Observable.fromEvent($(username), 'keyup')
+	//     .subscribe(x => {
+	//         Rx.Observable.fromPromise(getUser(x.target.value))
+	//             .subscribe(user => {
+	//                 console.log(user)
+	//                 $('#name').text(user.data.name)
+	//                 $('#blog').text(user.data.company)
+	//                 $('#repos').text('Public respos: ' + user.data.public_repos)
+	//             });
+	//     })
+	//
+	//
 
-	myPromise.then(function (x) {
-	    console.log(x);
-	});
 
-	//Example how to cobine promise with rx
-	var source$ = _Rx2.default.Observable.fromPromise(myPromise);
-	source$.subscribe(function (x) {
+	//------------------------------------------------------------------------------------------
+
+	//Rx Operators
+
+	/*
+	 * Genera números en intervalos de 100 ms
+	 */
+	// Rx.Observable.interval(2)
+	//     .take(25)
+	//     .subscribe(x => console.log(x));
+
+	//Toma elementos dentro de un rango de 10 a 100
+	// Rx.Observable.range(15, 25)
+	//     .subscribe(x => console.log(x))
+
+
+	_Rx2.default.Observable.range(15, 500).filter(function (x) {
+	    return x % 2 == 0;
+	}).take(5).subscribe(function (x) {
 	    return console.log(x);
+	});
+
+	//El orden en el que se aplican las funciones es muy importante
+	_Rx2.default.Observable.range(15, 500).take(5).filter(function (x) {
+	    return x % 2 == 0;
+	}).subscribe(function (x) {
+	    return console.log(x);
+	});
+
+	//Map allow apply function to items after tu emmit to subscribers
+	_Rx2.default.Observable.from(['Jhon', 'asd', 'aasd']).map(function (v) {
+	    return v.toUpperCase();
+	}).map(function (v) {
+	    return 'I am ' + v.toUpperCase();
+	}).subscribe(function (v) {
+	    return console.log(v);
 	});
 
 	/*
@@ -228,25 +299,23 @@
 	function getUser(username) {
 	    return _jquery2.default.ajax({
 	        url: 'https://api.github.com/users/' + username,
-	        dataType: 'jsonp'
+	        dataType: 'json'
 	    }).promise();
 	}
 
-	getUser("kenMarquez").then(function (x) {
-	    console.log(x);
-	});
+	function getRepos(username) {
+	    return _jquery2.default.ajax({
+	        url: 'https://api.github.com/users/' + username,
+	        dataType: 'json'
+	    }).promise();
+	}
 
-	_Rx2.default.Observable.fromPromise(getUser("KenMarquez")).subscribe(function (x) {
-	    return console.log(x);
-	});
-
-	_Rx2.default.Observable.fromEvent((0, _jquery2.default)(username), 'keyup').subscribe(function (x) {
-	    _Rx2.default.Observable.fromPromise(getUser(x.target.value)).subscribe(function (user) {
-	        console.log(user);
-	        (0, _jquery2.default)('#name').text(user.data.name);
-	        (0, _jquery2.default)('#blog').text(user.data.company);
-	        (0, _jquery2.default)('#repos').text('Public respos: ' + user.data.public_repos);
-	    });
+	_Rx2.default.Observable.fromEvent((0, _jquery2.default)(username), 'keyup').map(function (x) {
+	    return x.target.value;
+	}).switchMap(function (v) {
+	    return _Rx2.default.Observable.fromPromise(getUser(v));
+	}).subscribe(function (user) {
+	    return console.log(user);
 	});
 
 /***/ }),

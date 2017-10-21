@@ -148,21 +148,89 @@ import Rx from 'rxjs/Rx';
 
 //Rx from Promise
 
-//Example how to create a promise from 0
-const myPromise = new Promise((resolve, reject) => {
-    console.log("Creating promise")
-    setTimeout(() => {
-        resolve("hello from promise")
-    }, 3000)
-});
+// //Example how to create a promise from 0
+// const myPromise = new Promise((resolve, reject) => {
+//     console.log("Creating promise")
+//     setTimeout(() => {
+//         resolve("hello from promise")
+//     }, 3000)
+// });
+//
+// myPromise.then(x => {
+//     console.log(x)
+// })
+//
+// //Example how to cobine promise with rx
+// const source$ = Rx.Observable.fromPromise(myPromise)
+// source$.subscribe(x => console.log(x))
+//
+// /*
+//  * request user to github api
+//  * return promise of request
+//  */
+// function getUser(username) {
+//     return $.ajax({
+//         url: 'https://api.github.com/users/' + username,
+//         dataType: 'jsonp'
+//     }).promise()
+// }
+//
+//
+// getUser("kenMarquez").then(
+//     x => {
+//         console.log(x)
+//     }
+// )
+//
+// Rx.Observable.fromPromise(getUser("KenMarquez"))
+//     .subscribe(x => console.log(x));
+//
+// Rx.Observable.fromEvent($(username), 'keyup')
+//     .subscribe(x => {
+//         Rx.Observable.fromPromise(getUser(x.target.value))
+//             .subscribe(user => {
+//                 console.log(user)
+//                 $('#name').text(user.data.name)
+//                 $('#blog').text(user.data.company)
+//                 $('#repos').text('Public respos: ' + user.data.public_repos)
+//             });
+//     })
+//
+//
 
-myPromise.then(x => {
-    console.log(x)
-})
 
-//Example how to cobine promise with rx
-const source$ = Rx.Observable.fromPromise(myPromise)
-source$.subscribe(x => console.log(x))
+//------------------------------------------------------------------------------------------
+
+//Rx Operators
+
+/*
+ * Genera números en intervalos de 100 ms
+ */
+// Rx.Observable.interval(2)
+//     .take(25)
+//     .subscribe(x => console.log(x));
+
+//Toma elementos dentro de un rango de 10 a 100
+// Rx.Observable.range(15, 25)
+//     .subscribe(x => console.log(x))
+
+
+Rx.Observable.range(15, 500)
+    .filter(x => (x % 2 == 0))
+    .take(5)
+    .subscribe(x => console.log(x))
+
+//El orden en el que se aplican las funciones es muy importante
+Rx.Observable.range(15, 500)
+    .take(5)
+    .filter(x => (x % 2 == 0))
+    .subscribe(x => console.log(x))
+
+//Map allow apply function to items after tu emmit to subscribers
+Rx.Observable.from(['Jhon', 'asd', 'aasd'])
+    .map(v => v.toUpperCase())
+    .map(v => 'I am ' + v.toUpperCase())
+    .subscribe(v => console.log(v))
 
 /*
  * request user to github api
@@ -171,28 +239,20 @@ source$.subscribe(x => console.log(x))
 function getUser(username) {
     return $.ajax({
         url: 'https://api.github.com/users/' + username,
-        dataType: 'jsonp'
+        dataType: 'json'
     }).promise()
 }
 
-
-getUser("kenMarquez").then(
-    x => {
-        console.log(x)
-    }
-)
-
-Rx.Observable.fromPromise(getUser("KenMarquez"))
-    .subscribe(x => console.log(x));
+function getRepos(username) {
+    return $.ajax({
+        url: 'https://api.github.com/users/' + username,
+        dataType: 'json'
+    }).promise()
+}
 
 Rx.Observable.fromEvent($(username), 'keyup')
-    .subscribe(x => {
-        Rx.Observable.fromPromise(getUser(x.target.value))
-            .subscribe(user => {
-                console.log(user)
-                $('#name').text(user.data.name)
-                $('#blog').text(user.data.company)
-                $('#repos').text('Public respos: ' + user.data.public_repos)
-            });
-    })
+    .map(x => x.target.value)
+    .switchMap(v => Rx.Observable.fromPromise(getUser(v)))
+    .subscribe(user => console.log(user))
+
 
